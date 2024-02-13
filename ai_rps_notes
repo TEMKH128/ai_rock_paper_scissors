@@ -1,0 +1,11 @@
+* AI RPS - Deep Learning (Convulational Neural Network - SqueezeNet).
+* Requirements - Keras,  Tensorflow, OpenCV.
+
+* Image Classifier: 3 Categories (RPS).
+
+1) Collect Image Dataset.
+2) Select / Design Neural Net (Pre-trained SqueezeNet).
+3) Training.
+4) Testing Model Out.
+
+j
