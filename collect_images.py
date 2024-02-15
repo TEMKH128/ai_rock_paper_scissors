@@ -97,7 +97,7 @@ def display_frame(frame, image_count, num_images, label):
     # opt_line_type). cv2.LINE_AA = antialised (process for smoothing
     # lines = higher quality text)
     cv2.putText(frame, f"Images Collected: {image_count}/{num_images}",
-        (5, 50), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (255, 255, 255),
+        (5, 50), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 0),  # BGR - black.
         2, cv2.LINE_AA)
     
     # Displays frame with window text.
@@ -165,7 +165,7 @@ def capture_images(dest_path, label, num_images):
 
         # Draws rectangle on frame from (100, 100) to (500, 500) that is white
         # and has a line thickness of 2 pixels.
-        cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)
+        cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)  # BGR - white.
 
         if (capture_image):
             image_count = extract_save_image(frame, dest_path, label,
