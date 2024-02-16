@@ -2,6 +2,7 @@ import os
 import cv2
 import keras.layers as layers
 from keras.utils import np_utils
+from keras.optimizers import Adam
 from keras.models import Sequential
 from keras_squeezenet import SqueezeNet
 
@@ -104,5 +105,28 @@ def prepare_data(dataset):
     return images, labels
 
     
+def configure_model(model):
+    """
+    Configures model for training, specifying optimisation algorithm (Adam)
+    with its learning rate, loss function used to evalaute model performance,
+    and metrics used to evaluate model performance.
+    Parameters:
+      * model: model to be configured.
+    Return: configured model.
+    """
 
+    # retrieve_model called from outsided and passed into configure model.
+    # compile - configures learning process (model) for training.
+    # optomizer - Specifies the optimisation algorithm to be dused during training (Adam(lr=0.0001)).
+    # Adam is an optimisation algorithm (used to find the best possible solution to a given problem),
+    # loss -specifies loss function used to eval. model's performanace during training.
+    # categorical-crosentropy is common for multi-class classificatin with one-hot encoded labels.
+    # metrics - specifies metrics to be used for eval. model's performance during training and testing.
+    # accuracy metric will be calc. and displayed during training.
+    model.compile(
+        optimizer=Adam(lr=0.0001),
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
 
+    return model
