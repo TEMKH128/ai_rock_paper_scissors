@@ -130,3 +130,15 @@ def configure_model(model):
     )
 
     return model
+
+
+def train_model():
+    dataset = load_collected_images("image_data")
+    images, labels = prepare_data(dataset)
+    
+    model = retrieve_model(len(LABEL_MAP))
+    model = configure_model(model)
+
+
+if __name__ == "__main__":
+    train_model()
