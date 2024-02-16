@@ -1,6 +1,7 @@
 import os
 import cv2
 import keras.layers as layers
+from keras.utils import np_utils
 from keras.models import Sequential
 from keras_squeezenet import SqueezeNet
 
@@ -58,6 +59,49 @@ def load_collected_images(img_dir):
             dataset.append([img, directory])
 
     return dataset
+
+
+def mapper(label):
+    """
+    Retrieves the numerical representation of label stored LABEL_MAP.
+    Parameters:
+      * label: label of image (E.g. rock/paper/etc)
+    Return: Numerical represntation of label.
+    """
+    return LABEL_MAP[label]
+
+
+def prepare_data(dataset):
+    """
+    Prepares data into suitabe formats to be used by the model.
+    Seperates images and labels from dataset, conducts numerical conversion
+    of labels and subsequent one-hot encoding.
+    Parameters:
+      * dataset: dataset containing images and labels lists.
+    Return: seperated and processed images and one-hot encoded labels.
+    """
+    # dataset = [[img, 'rock'], [img, 'paper], [img, 'paper'], ...]
+    # zip(*list) - passing elements of nested list as seperate args.
+    # In assignment unpacking can lead to another list - E.g. a, b = [1, 2, 3] -> a = 1 and b = [2, 3]
+    # however when unpacking within a function call the elements are unpacked and passed as seperate arguments to function
+    # rather than collecting them into a new list.  zip([img, 'rock'], [img, 'paper'], ...) 
+    images, labels = zip(*dataset)  # [img, img, ...], ['rock', 'paper', ...]
+    
+    # Mapping labels to numbers.
+    labels = list(map(mapper, labels))
+
+    # One-hot encoding the labels.
+    labels = np_utils.to_categorical(labels)
+    # one hot encode the labels  # part of preparing the data.
+    # Converts list of numerical labels into one-hot encoded vectors (binary vectors).
+    # Each category is represented by a vector where all elements are 0 except for the index
+    # corresp. to category - E.g. rock = [1, 0, 0, 0], paper [0, 1, 0, 0], scissors [0, 0, 1, 0], none [0, 0, 0, 1]
+    # one-hot encoding is needed for categorical variables when training ML models esp. neural networks.
+    # as they require numerical input (on-hot encoding represents categorical variables numerically) in a format
+    # suitable for training.
+    # none is also one-hot encoded as its incl. in class_map and numerical labels.
+
+    return images, labels
 
     
 
