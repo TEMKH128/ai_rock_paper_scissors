@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy
 import keras.layers as layers
 from keras.utils import np_utils
 from keras.optimizers import Adam
@@ -7,7 +8,7 @@ from keras.models import Sequential
 from keras_squeezenet import SqueezeNet
 
 
-LABEL_MAP = {  # used also for num_classifications.
+LABEL_MAP = {
     "rock": 0,
     "paper": 1,
     "scissors": 2,
@@ -132,12 +133,34 @@ def configure_model(model):
     return model
 
 
+def train_model(model, images, labels):
+    """
+    Training the model, using the images (data) and their corresponding
+    one-hot encoded labels over specified epochs (iterations)
+    Parameters:
+      * model: model to be trained.
+      * images: data images list used in training.
+      * labels: one-hot encoded labels list that corresponds to images list.
+    Return: The trained model.
+    """
+    # why train over 10 epochs/iterations. The less the loss and higher the accuracy the better the model (goal of each epoch)
+    # training for too few epochs may result in underfitting, where the model fails to capture the underlying patterns in the data.
+    # Conversely, training for too many epochs may lead to overfitting, where the model performs 
+    # well on the training data but fails to generalize to unseen data. 10 epochs choice is based on
+    # empirical experimentation or prior knowledge of the dataset's complexity.
+    # lists correspond with one another - index 0 of labels belong to index 0 of data.
+    # model.fit() takes input data and its corresp. labels and does the training over a specified no. of epochs.
+    model.fit(numpy.array(images), numpy.array(labels), epochs=10)
+    return model
+
+
 def train_model():
     dataset = load_collected_images("image_data")
     images, labels = prepare_data(dataset)
     
     model = retrieve_model(len(LABEL_MAP))
     model = configure_model(model)
+    model = train_model(model, images, labels)
 
 
 if __name__ == "__main__":
