@@ -154,6 +154,17 @@ def train_model(model, images, labels):
     return model
 
 
+def save_trained_model(model):
+    """
+    Save the trained model for later use following Hierarchical Data
+    Format (HDF) which stores large amounts of numerical data.
+    Parameters:
+      * model: Trained model to be saved.
+    """
+    model.save("trained_models/rock-paper-scissors-model.h5")
+    print("Model saved to trained_model directory within project.")
+
+
 def train_model():
     dataset = load_collected_images("image_data")
     images, labels = prepare_data(dataset)
@@ -161,6 +172,7 @@ def train_model():
     model = retrieve_model(len(LABEL_MAP))
     model = configure_model(model)
     model = train_model(model, images, labels)
+    save_trained_model(model)
 
 
 if __name__ == "__main__":
