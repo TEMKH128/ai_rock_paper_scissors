@@ -1,3 +1,4 @@
+import cv2
 from keras.models import load_model
 
 
@@ -40,4 +41,31 @@ def load_trained_model():
         print("model not found within trained_models package")
         return None
 
-load_trained_model()
+def create_playing_areas(frame):
+    """
+    Creates playing areas to be used by player (capture image) and
+    computer (Display its move).
+    Parameters:
+      * frame: frame rectangles will be drawn on.
+    """
+    # User's play area.
+    cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)  # BGR - white.
+
+    # Computer's play area.
+    cv2.rectangle(frame, (800, 100), (1200, 500), (255, 255, 255), 2)  # BGR - white.
+
+
+def execute_program():
+    # Initialise video capture object, opens default camera (0), which will be
+    # used to capture video frames from camera.
+    capture = cv2.VideoCapture(0)
+
+    while (True):
+        # Reads a frame (particular instance of video in single point in time,
+        # treated like images) from video capture object.  
+        # tuple returned (frame_retrieved_boolean, image/frame [numpy array])
+        retrieved, frame = capture.read()
+
+        if (not retrieved): continue
+
+        create_playing_areas(frame)
