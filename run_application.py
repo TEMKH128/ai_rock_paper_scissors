@@ -55,6 +55,25 @@ def create_playing_areas(frame):
     cv2.rectangle(frame, (800, 100), (1200, 500), (255, 255, 255), 2)  # BGR - white.
 
 
+def extract_user_image(frame):
+    """
+    Extracts region of interest (Use'rs portion of frame) from frame.
+    Convert its colour space form BGR to RGB and resize image to 224 x 224,
+    which is ideal when working with DenseNet model.
+    Parameters:
+      * frame: frame where region of interest will be extracted from.
+    Return: image representing region of interest.
+    """
+    # Extract region of interest (roi) from frame (rectangle) using
+    # numpy array slicing - rows and column (100th to 499th).
+    region_of_interest = frame[100:500, 100:500]
+
+    img = cv2.cvTColor(region_of_interest, cv2.COLOR_BGR2RGB)
+    img = cv2.resize(img, (224, 224))  # 224 x 224 pixels, DenseNet.
+
+    return img
+
+
 def execute_program():
     # Initialise video capture object, opens default camera (0), which will be
     # used to capture video frames from camera.
@@ -69,3 +88,4 @@ def execute_program():
         if (not retrieved): continue
 
         create_playing_areas(frame)
+        img = extract_user_image(frame)
