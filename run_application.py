@@ -1,5 +1,6 @@
 import cv2
 import numpy
+import random
 from keras.models import load_model
 
 NUMBER_LABEL_MAP = {  # Used to classiy predicition.
@@ -102,6 +103,29 @@ def predict_player_move(model, img):
     return NUMBER_LABEL_MAP[move_code]
 
 
+def determine_player_comp_winner(previous_move, player_move, computer_move, winner):
+    """
+    Determines winner provided that the previous move made by player isn't
+    their current move and their move is classified as Rock/Paper/Scissors.
+    Parameters:
+      * previous_move: player's previous move.
+      * player_move: player's current move.
+      * computer_move: stores computer's most recent move.
+      * winner: winner if outcome can be determined otherwise error message.
+    Return: computer's most recent move and winner 
+    (player/computer/error-message).
+    """
+    if (previous_move != player_move and player_move != "none"):
+        computer_move = random.choice(['rock', 'paper', 'scissors'])
+        winner = determine_winner(player_move, computer_move)
+        
+    elif (previous_move != player_move and player_move == "none"):
+        computer_move = "None"
+        winner = "Undetermined...No Moves Made."
+
+    return computer_move, winner
+
+
 def execute_program():
     model = load_trained_model()
     if (model == None): return
@@ -110,6 +134,7 @@ def execute_program():
     # used to capture video frames from camera.
     capture = cv2.VideoCapture(0)
 
+    previous_move = None
     while (True):
         # Reads a frame (particular instance of video in single point in time,
         # treated like images) from video capture object.  
@@ -121,3 +146,11 @@ def execute_program():
         create_playing_areas(frame)
         img = extract_user_image(frame)
         player_move = predict_player_move(model, img)
+
+        # Determine winner (player/computer).
+        computer_move, winner = determine_player_comp_winner(previous_move,
+            player_move, computer_move, winner)
+
+        previous_move = player_move
+
+
