@@ -1,5 +1,13 @@
 import cv2
+import numpy
 from keras.models import load_model
+
+NUMBER_LABEL_MAP = {  # Used to classiy predicition.
+        0: "rock",
+        1: "paper",
+        2: "scissors",
+        3: "none"
+    }
 
 
 def determine_winner(player_move, comp_move):
@@ -74,7 +82,30 @@ def extract_user_image(frame):
     return img
 
 
+def predict_player_move(model, img):
+    """
+    Uses model and image captured (represents player's move) to predict
+    the players move (rock/paper/scissors).
+    Parameters:
+      * model: trained model that will classify image.
+      * img: image representing players move to be classified.
+    Return: player's predicted/classified move.
+    """
+    # Predict move.
+    # makes predictions using a ML model based on input ('img').
+    # converts image into a numpy array and wraps it in another array as predict() expects
+    # array-like input.
+    predictions = model.predict(numpy.array([img]))
+    # np.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is 0 - rock]
+    move_code = numpy.argmax(predictions[0])  # corresponds with numpy array index from predict()
+    
+    return NUMBER_LABEL_MAP[move_code]
+
+
 def execute_program():
+    model = load_trained_model()
+    if (model == None): return
+
     # Initialise video capture object, opens default camera (0), which will be
     # used to capture video frames from camera.
     capture = cv2.VideoCapture(0)
@@ -89,3 +120,4 @@ def execute_program():
 
         create_playing_areas(frame)
         img = extract_user_image(frame)
+        player_move = predict_player_move(model, img)
