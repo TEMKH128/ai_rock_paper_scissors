@@ -68,7 +68,7 @@ def extract_user_image(frame):
     # numpy array slicing - rows and column (100th to 499th).
     region_of_interest = frame[100:500, 100:500]
 
-    img = cv2.cvTColor(region_of_interest, cv2.COLOR_BGR2RGB)
+    img = cv2.cvtColor(region_of_interest, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (224, 224))  # 224 x 224 pixels, DenseNet.
 
     return img
