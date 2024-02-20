@@ -146,7 +146,7 @@ def display_frame(frame, player_move, computer_move, winner):
         cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
     
     cv2.putText(frame, f"Winner: {winner}", (400, 600), 
-        cv2.FONT_HERSHEY_TRIPLEX, 1, (87, 139, 46), 2, cv2.LINE_AA)
+        cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
     
     if (computer_move != None):
         print(f"move_icons/{computer_move.lower()}.png")
@@ -160,6 +160,37 @@ def display_frame(frame, player_move, computer_move, winner):
         frame[100:500, 800: 1200] = move_icon
 
     cv2.imshow("AI Rock Paper Scissors", frame)
+
+
+def exit_pause_game():
+    """
+    Determines whether play wan't to exit game by looking for "q" keypress.
+    Return: boolean representing whether user wants to quit the game.
+    """
+    key_press = cv2.waitKey(10)
+
+    if (key_press == ord(" ")):
+        while (True):
+            key_press = cv2.waitKey(10)
+
+            if (key_press == ord(" ")): return False
+
+            elif (key_press == ord("q")): return True 
+
+    elif (key_press == ord('q')): return True
+    
+    return False
+
+
+def release_resources(capture):
+    """
+    Releases resources used during image capturing process.
+    Parameters:
+      * capture: video capture object used to capture video frames.
+    """
+    # Release video capture resourcs, opencv windows (cv2.imshow())
+    capture.release()
+    cv2.destroyAllWindows()
 
 
 def execute_program():
@@ -187,7 +218,6 @@ def execute_program():
         create_playing_areas(frame)
         img = extract_user_image(frame)
         player_move = predict_player_move(model, img)
-        print("184: " + player_move)
 
         # Determine winner (player/computer).
         computer_move, winner = determine_player_comp_winner(previous_move,
@@ -196,6 +226,10 @@ def execute_program():
         previous_move = player_move
 
         display_frame(frame, player_move, computer_move, winner)
+
+        if (exit_pause_game()): break
+
+    release_resources(capture)
 
 
 if __name__ == "__main__":
