@@ -3,6 +3,7 @@ import numpy
 import random
 from keras.models import load_model
 
+
 NUMBER_LABEL_MAP = {  # Used to classiy predicition.
         0: "rock",
         1: "paper",
@@ -44,7 +45,8 @@ def load_trained_model():
     Return: Return the model loaded.
     """
     try:
-        model = load_model("trained_models/rock-paper-scissors-model.h5")
+        # "trained_models/rock-paper-scissors-model.keras"
+        return load_model("trained_models/rock-paper-scissors-test-model.keras")
 
     except OSError:
         print("model not found within trained_models package")
@@ -120,21 +122,60 @@ def determine_player_comp_winner(previous_move, player_move, computer_move, winn
         winner = determine_winner(player_move, computer_move)
         
     elif (previous_move != player_move and player_move == "none"):
-        computer_move = "None"
+        computer_move = None
         winner = "Undetermined...No Moves Made."
 
     return computer_move, winner
 
 
+def display_frame(frame, player_move, computer_move, winner):
+    """
+    Displays frame where user make's moves, display's computer's moves using
+    icons (Rock/Paper/Scissors) and displays text reflecting game state
+    (i.e. who won, etc).
+    Parameters:
+      * frame: frame to displayed.
+      * player_move: move made by player (Rock/Paper/Scissors/None).
+      * computer_move: move made by computer (Rock/Paper/Scissors/None).
+      * winner: outcome of game (Player/Computer/None)
+    """
+    cv2.putText(frame, f"Player Move: {player_move}", (50, 50), 
+        cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+    
+    cv2.putText(frame, f"Computer Move: {computer_move}", (750, 50), 
+        cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+    
+    cv2.putText(frame, f"Winner: {winner}", (400, 600), 
+        cv2.FONT_HERSHEY_TRIPLEX, 1, (87, 139, 46), 2, cv2.LINE_AA)
+    
+    if (computer_move != None):
+        print(f"move_icons/{computer_move.lower()}.png")
+        move_icon = cv2.imread(f"move_icons/{computer_move.lower()}.png")
+        print(move_icon.shape)
+        
+        # Base off Computer's playing area (cv2.rectangle)
+        move_icon = cv2.resize(move_icon, (400, 400))
+        print(move_icon.shape)
+        print("Shape of frame before slicing:", frame.shape)
+        frame[100:500, 800: 1200] = move_icon
+
+    cv2.imshow("AI Rock Paper Scissors", frame)
+
+
 def execute_program():
+    print("Attempting to Load Model ...")
     model = load_trained_model()
+    
     if (model == None): return
 
     # Initialise video capture object, opens default camera (0), which will be
     # used to capture video frames from camera.
+    # Set resolution to 1280x720 (More space)
     capture = cv2.VideoCapture(0)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
-    previous_move = None
+    previous_move = computer_move = winner = None
     while (True):
         # Reads a frame (particular instance of video in single point in time,
         # treated like images) from video capture object.  
@@ -146,6 +187,7 @@ def execute_program():
         create_playing_areas(frame)
         img = extract_user_image(frame)
         player_move = predict_player_move(model, img)
+        print("184: " + player_move)
 
         # Determine winner (player/computer).
         computer_move, winner = determine_player_comp_winner(previous_move,
@@ -153,4 +195,8 @@ def execute_program():
 
         previous_move = player_move
 
+        display_frame(frame, player_move, computer_move, winner)
 
+
+if __name__ == "__main__":
+    execute_program()
