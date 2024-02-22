@@ -1,0 +1,95 @@
+* Steps: 1) Collect Images, 2) Train Model Using Images (CNN, DenseNet), 3) Test Model, 4) Setup Gameplay.
+
+
+Collecting Images:
+  * Collect Images for each label (Rock, Paper, Scissors, None) that will be used to train the model for image classification.
+
+  * cv2: OpenCV module that assists developers in working with images and video-processing.
+  
+  * Working /w cv2:
+    - Initialise Video Capture Object: Used to capture video frames from camera. E.g. capture cv2.VideoCapture(0) [opens default camera (0)].
+    
+    - Capture Frame: Read/Capture frame, which is a particular instance of video in single point in time and are treated like images.
+      - E.g. retrieved, frame = capture.read()
+     
+      - tuple returned - (frame_retrieved_boolean, image/frame [numpy array])
+      
+    - Drawing Rectangle on Frame: Can be used to display a region of interest, etc.
+      - E.g. cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)
+      
+      - cv2.rectangle(image, start_point [top_left], end_point [bottom_right], colour [cv2 uses BGR Colour Space], line_thickness)
+
+    - Origin of CV2 Frame: (0, 0) is top-left of image/frame, and x increase right and y increases down.
+    
+    - Extracting Region of Interest (ROI): Area where pixel info. will be extracted to be used in E.g. Image classification.
+      - E.g. region_of_interest = frame[100:500, 100:500]
+      
+      - Numpy 2D array slicing - rows and column (100 to 499), takes everything within the ranges. Match cv2.rectangle drawn.
+      
+    - Saving ROI as an Image:
+      - E.g. cv2.imwrite(image_path, region_of_interest)  [provide filename, image to be saved. Returns True if successful].
+      
+      
+    - Adding Text to Frame:
+      - E.g. cv2.putText(frame, f"Images Collected: {image_count}/{num_images}",
+        (5, 50), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 0),  # BGR - black.
+        2, cv2.LINE_AA)
+        
+      - cv2.putText(image, text, bottom_left_post, font, font_scale, [relative to base font size of font type], BGR_font_colour, text_thickness, opt_line_type)
+      - opt_line_type of cv2.LINE_AA: antialised, process for smoothing lines = higher quality text.
+      
+    - Displaying Frame:
+      - E.g. cv2.imshow(f"Collecting {label} Images:", frame)  [Displays frame with provided window title].
+      
+    - User Input:
+      - E.g. key_press = cv2.waitKey(10)
+      - Waits for key press for provided duration E.g. 10 milliseconds. Shorter wait are better if need to respond quickly to user and for higher frame rates (frequency at which frames in film, etc are displayed, higher = fast scenes and smoother look) but consumes more CPU resources. If wait time 0 = waits indefinitely until key pressed, < 0 indefinitely w/o blocking program.
+      - Returns ASCII (numerical) value of key press, If none within time period than returns -1.    
+      
+    - Release Resources: Hardware and software resources. Allow for other use (E.g. If default camera not released can't use it for other uses).
+      - E.g. capture.release()  [Release video capture object].
+      - E.g. cv2.destroyAllWindows()      
+
+
+
+
+
+
+
+
+
+
+import cv2
+import numpy
+import unittest
+from keras.models import load_model
+
+model = load_model("tests/trained_models/rock-paper-scissors-test-model.keras")
+def test_rock_classification(self):
+        # Prepare image.
+        img = cv2.imread("tests/test_image_data/rock/rock_1.jpg")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.resize(img, (224, 224))
+
+        # Predict move.
+        # makes predictions using a ML model based on input ('img').
+        # converts image into a numpy array and wraps it in another array as predict() expects
+        # array-like input.
+        predictions = self.model.predict(numpy.array([img]))
+        # np.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is 0 - rock]
+        move_code = numpy.argmax(predictions[0])  # corresponds with numpy array index from predict()
+        label = self.number_label_map[move_code]
+
+        self.assertEqual("rock", label)
+
+
+* AI RPS - Deep Learning (Convulational Neural Network - SqueezeNet).
+* Requirements - Keras,  Tensorflow, OpenCV.
+
+* Image Classifier: 3 Categories (RPS).
+
+1) Collect Image Dataset.
+2) Select / Design Neural Net (Pre-trained SqueezeNet).
+3) Training.
+4) Testing Model Out.
+
