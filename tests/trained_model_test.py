@@ -13,6 +13,7 @@ class TestTrainedModel(unittest.TestCase):
     }
 
     model = load_model("tests/trained_models/rock-paper-scissors-test-model.keras")
+    
     def test_rock_classification(self):
         # Prepare image.
         img = cv2.imread("tests/test_image_data/rock/rock_1.jpg")
@@ -20,12 +21,8 @@ class TestTrainedModel(unittest.TestCase):
         img = cv2.resize(img, (224, 224))
 
         # Predict move.
-        # makes predictions using a ML model based on input ('img').
-        # converts image into a numpy array and wraps it in another array as predict() expects
-        # array-like input.
         predictions = self.model.predict(numpy.array([img]))
-        # np.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is 0 - rock]
-        move_code = numpy.argmax(predictions[0])  # corresponds with numpy array index from predict()
+        move_code = numpy.argmax(predictions[0])
         label = self.number_label_map[move_code]
 
         self.assertEqual("rock", label)
