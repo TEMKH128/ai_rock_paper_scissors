@@ -158,7 +158,7 @@ def capture_images(dest_path, label, num_images):
         capture_image, quit_process = check_user_input(capture_image,
             quit_process)
 
-    print(f"{num_images} Image(s) Saved to {dest_path}.")
+    print(f"{image_count} Image(s) Saved to {dest_path}.")
     release_resources(capture)
 
 
