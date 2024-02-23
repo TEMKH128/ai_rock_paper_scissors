@@ -1,5 +1,6 @@
 description = """
 Gathers data images (with specified label) to be used to train model.
+Valid Labels: 1) rock, 2) paper, 3) scissors, 4) none.
 Usage: python3 collect_images.py <label_name> <sample_size>  E.g. python3 rock 200.
 Order <label_name> <sample_size> is important!
 
@@ -20,13 +21,18 @@ def retrieve_arguments():
     Return: List containing retrieved command-line arguments, empty list
     if none are retrieved.
     """
+    valid_labels = ["rock", "paper", "scissors", "none"]
     args = []
+    
     try:
-        args.append(sys.argv[1])
+        # make sure they are within given labels
+        if (sys.argv[1].lower() in valid_labels):
+            args.append(sys.argv[1])
+
         args.append(int(sys.argv[2]))
 
     except:
-        print("Error: Needed arguments are missing.\n" + description)
+        pass  # Handled outside of function.
 
     return args
 
@@ -165,9 +171,12 @@ def capture_images(dest_path, label, num_images):
 def collect_images():
     args = retrieve_arguments()
 
-    if (len(args) == 2):
-        dest_path = create_image_directories("image_data", args[0])
-        capture_images(dest_path, args[0], args[1])
+    if (len(args) != 2):
+        print("Error: Needed arguments are missing.\n" + description)
+        return
+    
+    dest_path = create_image_directories("image_data", args[0].lower())
+    capture_images(dest_path, args[0], args[1])
 
 
 if __name__ == "__main__":
