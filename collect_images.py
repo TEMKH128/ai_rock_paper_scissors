@@ -69,15 +69,13 @@ def extract_save_image(frame, dest_path, label, image_count):
       * image_count: Number of images that have been collected thus far.
     Return: Number of images that have been collected thus far.
     """
-    # Extract region of interest (roi) from frame (rectangle) using
-    # numpy array slicing - rows and column (100th to 499th).
+    # Extract region of interest (roi) from frame (Match Rectangle Drawn).
     region_of_interest = frame[100:500, 100:500]
 
     image_path = os.path.join(dest_path, f"{label}_{image_count +1}" +
-        ".jpg")  # file path must include image format.
+        ".jpg")
     
-    # Saiving roi as an image - cv2.imwrite(filename, image), return true
-    # if successful.
+    # Saving roi as an image
     if (cv2.imwrite(image_path, region_of_interest)): image_count +=1
 
     return image_count
@@ -92,15 +90,12 @@ def display_frame(frame, image_count, num_images, label):
       * num_images Total number of images to be collected.
       * label: Current image type/label being collected.
     """
-    #cv2.putText(image, text, bottom_left_pos, font, font_scale 
-    # [relative to base font size of font type], text_thickness, 
-    # opt_line_type). cv2.LINE_AA = antialised (process for smoothing
-    # lines = higher quality text)
+    # Add text to frame.
     cv2.putText(frame, f"Images Collected: {image_count}/{num_images}",
         (5, 50), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 0),  # BGR - black.
         2, cv2.LINE_AA)
     
-    # Displays frame with window text.
+   # Displays frame with window title.
     cv2.imshow(f"Collecting {label} Images:", frame)
 
 
@@ -113,16 +108,9 @@ def check_user_input(capture_image, quit_process):
         be exited.
     Return: capture_image and quit_process.
     """
-    # Waits for key press for duration E.g. 10 milliseconds then moves on,
-    # shorter waits better if need to respond quickly to user and for 
-    # higher frame rates but consumes more CPU resources.
-    # If wait time 0 = waits indefinitely until key pressed, > 0 for time
-    # specified, < 0 indefinitely w/o blocking program.
-    # Returns ASCII (numerical) value of key press, If none within time
-    # period than returns -1.
-
+    # Waits for key press for 10 milliseconds.
     key_press = cv2.waitKey(10)
-    if (key_press == ord(" ")):  # " " represents spacebar.
+    if (key_press == ord(" ")):  # " " = spacebar.
         capture_image = not capture_image
 
     elif (key_press == ord("q")): quit_process = not quit_process
@@ -149,30 +137,26 @@ def capture_images(dest_path, label, num_images):
       * label: Type of images being captured (rock/paper/scissors/etc)
       * num_images: number of images that should be captured.
     """
-    # Initialise video capture object, opens default camera (0), which will be
-    # used to capture video frames from camera.
+    # Initialise video capture object (Default camera).
     capture = cv2.VideoCapture(0)
     capture_image = quit_process = False
     image_count = 0
 
     while (image_count < num_images and (not quit_process)):
-        # Reads a frame (particular instance of video in single point in time,
-        # treated like images) from video capture object.  
-        # tuple returned (frame_retrieved_boolean, image/frame [numpy array])
         retrieved, frame = capture.read()
 
         if (not retrieved): continue
 
-        # Draws rectangle on frame from (100, 100) to (500, 500) that is white
-        # and has a line thickness of 2 pixels.
-        cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)  # BGR - white.
+        # Draws a white (BGR) rectangle on frame.
+        cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)
 
         if (capture_image):
             image_count = extract_save_image(frame, dest_path, label,
                 image_count)
             
         display_frame(frame, image_count, num_images, label)
-        capture_image, quit_process = check_user_input(capture_image, quit_process)
+        capture_image, quit_process = check_user_input(capture_image,
+            quit_process)
 
     print(f"{num_images} Image(s) Saved to {dest_path}.")
     release_resources(capture)
