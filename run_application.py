@@ -45,7 +45,7 @@ def load_trained_model():
     Return: Return the model loaded.
     """
     try:
-        return load_model("trained_models/rock-paper-scissors-model.keras")
+        return load_model("trained_models/rock-paper-scissors.keras")
 
     except OSError:
         print("model not found within trained_models package")
