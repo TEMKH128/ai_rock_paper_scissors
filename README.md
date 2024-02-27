@@ -47,8 +47,6 @@
 * Hopefully your computer can handle the training process, feel free to collect the number of images, use the number of epochs and batch size that works for your resources.
   * Modify train_model() function in train_model.py: model.fit(numpy.array(images), numpy.array(labels), batch_size=8, epochs=5)
 ###
-![error_demonstration](readme_pictures/play_error.png)
-###
 ###
 ###
 ## Collecting Images:
