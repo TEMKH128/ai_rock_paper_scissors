@@ -11,7 +11,7 @@
 ### Running Application:
 ##
 1) Collecting Images: Collect specified number of images for provided label (rock/paper/scissors/none), images will be used to train the model.
-  * format: python3 collect_images.py <label> <num_images>
+  * format: python3 collect_images.py label num_images
   * E.g. python3 collect_images.py none 100 [100 images of none will be collected].
 
   * Pause Image Collection: Enter/Hit computer's spacebar.
