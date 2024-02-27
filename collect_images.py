@@ -1,7 +1,7 @@
 description = """
 Gathers data images (with specified label) to be used to train model.
 Valid Labels: 1) rock, 2) paper, 3) scissors, 4) none.
-Usage: python3 collect_images.py <label_name> <sample_size>  E.g. python3 rock 200.
+Usage: python3 collect_images.py <label_name> <sample_size>  E.g. python3 collect_images.py rock 200.
 Order <label_name> <sample_size> is important!
 
 Only portion of image within the box displayed will be collected.
