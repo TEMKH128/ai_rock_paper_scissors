@@ -1,4 +1,9 @@
-* Steps: 1) Collect Images, 2) Train Model Using Images (CNN, DenseNet), 3) Test Model, 4) Setup Gameplay.
+General:
+  * AI RPS - Deep Learning (Convulational Neural Network - DenseNet).
+  * Requirements - Keras,  Tensorflow, OpenCV, numpy, etc.
+  * Image Classifier: 4 Categories (RPS, None).
+
+  * 1) Collect Image Dataset. 2) Select / Design Neural Net (Pre-trained DenseNet). 3) Training. 4) Testing/Using Model.
 
 
 Collecting Images:
@@ -8,6 +13,9 @@ Collecting Images:
   
   * Working /w cv2:
     - Initialise Video Capture Object: Used to capture video frames from camera. E.g. capture cv2.VideoCapture(0) [opens default camera (0)].
+    - Setting Resolution:
+      - E.g. capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+      - capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     
     - Capture Frame: Read/Capture frame, which is a particular instance of video in single point in time and are treated like images.
       - E.g. retrieved, frame = capture.read()
@@ -51,45 +59,83 @@ Collecting Images:
       - E.g. cv2.destroyAllWindows()      
 
 
-
-
-
-
-
-
-
-
-import cv2
-import numpy
-import unittest
-from keras.models import load_model
-
-model = load_model("tests/trained_models/rock-paper-scissors-test-model.keras")
-def test_rock_classification(self):
-        # Prepare image.
-        img = cv2.imread("tests/test_image_data/rock/rock_1.jpg")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (224, 224))
-
-        # Predict move.
-        # makes predictions using a ML model based on input ('img').
-        # converts image into a numpy array and wraps it in another array as predict() expects
-        # array-like input.
-        predictions = self.model.predict(numpy.array([img]))
-        # np.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is 0 - rock]
-        move_code = numpy.argmax(predictions[0])  # corresponds with numpy array index from predict()
-        label = self.number_label_map[move_code]
-
-        self.assertEqual("rock", label)
-
-
-* AI RPS - Deep Learning (Convulational Neural Network - SqueezeNet).
-* Requirements - Keras,  Tensorflow, OpenCV.
-
-* Image Classifier: 3 Categories (RPS).
-
-1) Collect Image Dataset.
-2) Select / Design Neural Net (Pre-trained SqueezeNet).
-3) Training.
-4) Testing Model Out.
-
+Training Model:
+  * keras - API for TensorFlow platform, provides interface for solving ML problems. Module covers data processing, tuning, deployment, etc.
+  
+  * Layers are basic building blocks of neural network in Keras.
+  
+  * Create Model:
+    - Base Model: DenseNet121 model (without its top classification) is used as a base layer for the model. We will provide our own classification layers.
+      - E.g. base_model = DenseNet121(include_top=False, weights="imagenet", classes=4,     
+                 input_shape=(224, 224, 3))
+                 
+        - weights="imagenet": pre-trained weights [parameters model learns during process], trained on imagenet dataset.
+        - classes=4: model trained to classify images into 4 classes (rps, none).
+        - input_shape=(224, 224, 3): Shape of input image (224 x 224 pixels) /w 3 colour channels. DenseNet works with images that are 224 x 224 pixels.
+     
+     - Trainable Base Model:
+       - E.g. base_model.trainable = True
+         - allows fine-tuning of base model's weight during training.
+         
+     - Linear Stack of Layers: Structure of neural network.
+       - E.g. model = Sequential()
+         - Sequential is a keras model that creates linear (one after another) stack of layers, output of 1 layer serves as input for next layer (flow of data from input layer to hidden layers to output layer).
+         
+     - Reducing Spatial Dimensions: done to feature maps (shapes, textures, etc), helps reduce computational complexity and overfitting.
+       - E.g. model.add(layers.MaxPool2D())
+     
+     - Flatten Layers: Flattens multi-dimensioanl output from previous layer into 1-dimensional vector, necessary before passing to a fully connected layer (E.g. converting from grid to simple list).
+     
+     - Dense Fully Connected Layer:
+       - E.g. layers.Dense(num_classifications, activation='softmax')
+       
+         - Adds a Dense (fully connected) layer to the model with a softmax activation function.
+         - No. of units in layer = number of classifications, softmax activation function to the output of the previous layer. Softmax converts the raw scores into probability distributions over the different classes.
+         
+  * Load Collecting Images (Data): Retrived from their directories, are resized (cv2.resize...) to match DenseNet (224 x 224) and colour space converted from BGR to RGB.
+  
+  *  Preparing Data: Prepare image data into format suitable for training. i.e. image's list and corresponding one-hot encoded label's list.
+    - E.g. images, labels = zip(*dataset)
+      - dataset = [[img, 'rock'], [img, 'paper], [img, 'paper'], ...]
+      - zip(*list) - passes elements of nested list as seperate args.
+      - Assignment unpacking can lead to another list - E.g. a, b = [1, 2, 3] -> a = 1 and b = [2, 3], however within a function call elements are unpacked and passed as seperate arguments.
+      - zip([img, 'rock'], [img, 'paper'], ...)
+      
+    - Mapping labels to Numbers: labels = list(map(mapper, labels))  [Assigned numbers to each label - Rock (0), Paper (1), ...].
+    
+    - One-hot encoding Labels: Converts list of numerical labels into one-hot encoded vectors (binary vectors). Each category is represented by a vector where all elements are 0 except for the index corresp. to category - E.g. rock = [1, 0, 0, 0], paper [0, 1, 0, 0], scissors [0, 0, 1, 0], none [0, 0, 0, 1]. one-hot encoding is needed for categorical variables when training ML models esp. neural networks. As they require numerical input (on-hot encoding represents categorical variables numerically) in a format suitable for training.
+      - E.g. labels = keras.utils.to_categorical()
+      
+  * Configure Model: Compile/Configure learning process (model) for training.
+    - E.g. model.compile(
+               optimizer=Adam(learning_rate=0.0001),
+               loss='categorical_crossentropy',
+               metrics=['accuracy']
+           )
+           
+      - optomizer - Specifies the optimisation algorithm to be dused during training. Adam is an optimisation algorithm (used to find the best possible solution to a given problem).
+      - loss -specifies loss function used to eval. model's performanace during training. categorical-crosentropy is common for multi-class classificatin with one-hot encoded labels.
+      - metrics - specifies metrics to be used for eval. model's performance during training and testing. Accuracy metric will be calc. and displayed during training.
+      
+  * Training Model: 
+    - Train model over epochs/iterations. The less the loss and higher the accuracy the better the model (goal of each epoch).
+    - Training for too few epochs may result in underfitting, where the model fails to capture the underlying patterns in the data. Training for too many epochs may lead to overfitting, where the model performs well on the training data but fails to generalize to unseen data.
+    
+    - E.g.  model.fit(numpy.array(images), numpy.array(labels), batch_size=8, epochs=5)
+      - numpy arrays correspond with one another - index 0 of labels belong to index 0 of data.
+      - model.fit() takes input data and its corresp. labels and does the training over a specified no. of epochs.
+      - Batch size: no. of training examples (samples of data) used in one epoch/iteration. using batches allows model to process data more efficiently, smaller batch sizes consume less memory.
+      - Epoch: 1 iteration or complete pass through entire training dataset (all batches per epoch), batches are randomised with each epoch. (To improve ability to generalise unseen data and avoid overfitting).
+      
+  
+Using Trained Model:
+  * Loading Saved Models: model = load_model("tests/trained_models/rock-paper-scissors-test-model.keras")  [provide path to model].
+  
+  * Loading Saved Images: img = cv2.imread("tests/test_image_data/rock/rock_1.jpg")  [provide path to image].
+  
+  * Predictions:
+    - E.g. predictions = model.predict(numpy.array([img]))
+      - Makes predictions using a ML model based on data input ('img'), image(s) is passed in a numpy array (as it can make multiple predictions at once. Outcome provided will an numpy array containing the one-hot encoded label prediction(s) made.
+      
+    - E.g. move_code = numpy.argmax(predictions[0])  # predictions[0] is the one we are working with.
+      - numpy.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is index 0 - which represents rock].
