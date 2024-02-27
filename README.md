@@ -36,13 +36,19 @@
 ###
 ![playing_none](readme_pictures/play_none.png)
 ###
+###
 ## Error Demonstration:
-##
+###
+![playing_error](readme_pictures/play_error.png)
+###
 * Training ML Models is resource intensive, sadly my PC couldn't handle the entire process. I made a few changes to the number of epochs (number of training iterations), batch size used in each epoch and reduced the overall number of images for training to 70 images per label (rock, paper,scissors, none).
 * Downside to Changes: Overfitting (Model gives accurate readings to data provided but struggles in generalisation), Not enough distinct made in images.
-* Hopefully your computer can handle the training process, feel free to collect the number of images, use number of epochs and batch size that works for your resources.
-* Modify train_model() function in train_model.py: model.fit(numpy.array(images), numpy.array(labels), batch_size=8, epochs=5)
-* ![error_demonstration](readme_pictures/play_error.png)
+###
+* Hopefully your computer can handle the training process, feel free to collect the number of images, use the number of epochs and batch size that works for your resources.
+  * Modify train_model() function in train_model.py: model.fit(numpy.array(images), numpy.array(labels), batch_size=8, epochs=5)
+###
+![error_demonstration](readme_pictures/play_error.png)
+###
 ###
 ###
 ## Collecting Images:
