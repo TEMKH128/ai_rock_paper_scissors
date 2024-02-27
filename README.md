@@ -37,7 +37,7 @@
 ![playing_none](readme_pictures/play_none.png)
 ###
 ###
-## Error Demonstration:
+#### Error Demonstration:
 ###
 ![playing_error](readme_pictures/play_error.png)
 ###
@@ -49,7 +49,7 @@
 ###
 ###
 ###
-## Collecting Images:
+#### Collecting Images:
 ###
 ![rock](readme_pictures/collect_rock.png)
 ###
@@ -57,6 +57,6 @@
 ###
 ![scissors](readme_pictures/collect_scissors.png)
 ###
-## Training Model:
+#### Training Model:
 ###
 ![training_model](readme_pictures/train_model.png)
