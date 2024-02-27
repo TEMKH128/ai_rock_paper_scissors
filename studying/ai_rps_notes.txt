@@ -1,5 +1,5 @@
 General:
-  * AI RPS - Deep Learning (Convulational Neural Network - DenseNet).
+  * AI RPS - Deep Learning (Convulotional Neural Network - DenseNet).
   * Requirements - Keras,  Tensorflow, OpenCV, numpy, etc.
   * Image Classifier: 4 Categories (RPS, None).
 
