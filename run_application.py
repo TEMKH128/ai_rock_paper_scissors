@@ -45,12 +45,12 @@ def load_trained_model():
     Return: Return the model loaded.
     """
     try:
-        # "trained_models/rock-paper-scissors-model.keras"
-        return load_model("trained_models/rock-paper-scissors-test-model.keras")
+        return load_model("trained_models/rock-paper-scissors-model.keras")
 
     except OSError:
         print("model not found within trained_models package")
         return None
+
 
 def create_playing_areas(frame):
     """
@@ -59,11 +59,11 @@ def create_playing_areas(frame):
     Parameters:
       * frame: frame rectangles will be drawn on.
     """
-    # User's play area.
-    cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)  # BGR - white.
+    # User's play area. BGR - white.
+    cv2.rectangle(frame, (100, 100), (500, 500), (255, 255, 255), 2)
 
-    # Computer's play area.
-    cv2.rectangle(frame, (800, 100), (1200, 500), (255, 255, 255), 2)  # BGR - white.
+    # Computer's play area. BGR - white.
+    cv2.rectangle(frame, (800, 100), (1200, 500), (255, 255, 255), 2)
 
 
 def extract_user_image(frame):
@@ -75,8 +75,7 @@ def extract_user_image(frame):
       * frame: frame where region of interest will be extracted from.
     Return: image representing region of interest.
     """
-    # Extract region of interest (roi) from frame (rectangle) using
-    # numpy array slicing - rows and column (100th to 499th).
+    # # Extract User's region of interest (roi) from frame.
     region_of_interest = frame[100:500, 100:500]
 
     img = cv2.cvtColor(region_of_interest, cv2.COLOR_BGR2RGB)
@@ -94,18 +93,17 @@ def predict_player_move(model, img):
       * img: image representing players move to be classified.
     Return: player's predicted/classified move.
     """
-    # Predict move.
-    # makes predictions using a ML model based on input ('img').
-    # converts image into a numpy array and wraps it in another array as predict() expects
-    # array-like input.
     predictions = model.predict(numpy.array([img]))
-    # np.argmax() returns the index of the max. value in an array. [one-hot encoded label - [1 0 0 0] max value index is 0 - rock]
-    move_code = numpy.argmax(predictions[0])  # corresponds with numpy array index from predict()
+
+    # Index of max. value in one-hot encoded label.
+    move_code = numpy.argmax(predictions[0])
     
     return NUMBER_LABEL_MAP[move_code]
 
 
-def determine_player_comp_winner(previous_move, player_move, computer_move, winner):
+def determine_player_comp_winner(previous_move, player_move, computer_move,
+    winner):
+
     """
     Determines winner provided that the previous move made by player isn't
     their current move and their move is classified as Rock/Paper/Scissors.
@@ -153,7 +151,7 @@ def display_frame(frame, player_move, computer_move, winner):
         move_icon = cv2.imread(f"move_icons/{computer_move.lower()}.png")
         print(move_icon.shape)
         
-        # Base off Computer's playing area (cv2.rectangle)
+        # Based off Computer's playing area (cv2.rectangle) dimensions.
         move_icon = cv2.resize(move_icon, (400, 400))
         print(move_icon.shape)
         print("Shape of frame before slicing:", frame.shape)
@@ -199,18 +197,15 @@ def execute_program():
     
     if (model == None): return
 
-    # Initialise video capture object, opens default camera (0), which will be
-    # used to capture video frames from camera.
-    # Set resolution to 1280x720 (More space)
+    # Initialise video capture object (Default camera).
     capture = cv2.VideoCapture(0)
+
+    # Set resolution to 1280x720 (More space).
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     previous_move = computer_move = winner = None
     while (True):
-        # Reads a frame (particular instance of video in single point in time,
-        # treated like images) from video capture object.  
-        # tuple returned (frame_retrieved_boolean, image/frame [numpy array])
         retrieved, frame = capture.read()
 
         if (not retrieved): continue
