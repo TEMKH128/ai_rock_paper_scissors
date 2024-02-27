@@ -147,14 +147,10 @@ def display_frame(frame, player_move, computer_move, winner):
         cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
     
     if (computer_move != None):
-        print(f"move_icons/{computer_move.lower()}.png")
         move_icon = cv2.imread(f"move_icons/{computer_move.lower()}.png")
-        print(move_icon.shape)
         
         # Based off Computer's playing area (cv2.rectangle) dimensions.
         move_icon = cv2.resize(move_icon, (400, 400))
-        print(move_icon.shape)
-        print("Shape of frame before slicing:", frame.shape)
         frame[100:500, 800: 1200] = move_icon
 
     cv2.imshow("AI Rock Paper Scissors", frame)
