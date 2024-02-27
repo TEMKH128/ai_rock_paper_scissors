@@ -52,6 +52,10 @@ def load_collected_images(img_dir):
     Return: dataset.
     """
     dataset = []
+    
+    if (not os.path.exists("image_data")):
+        return []
+        
     for directory in os.listdir(img_dir):
         label_path = os.path.join(img_dir, directory)
 
