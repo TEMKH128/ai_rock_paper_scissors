@@ -18,7 +18,7 @@
   * Stop/Quit Image Collection: Enter/Hit computer's "q" key.
   * Image Storage: Collected images will be stored in their label directory within the "image_data" directory (Created if directory doesn't exist). 
 ###
-2) Training Model: Train model using images collected in Image Collection process and One-hot encoded labels for rock, paper, scissors. [Note: Process is CPU intensive].
+2) Training Model: Train model using images collected in Image Collection process and one-hot encoded labels for rock, paper, scissors. [Note: Process is CPU intensive].
   *  E.g. python3 train_model.py
   *  Saving Model: Model is saved in trained_models directory as "rock-paper-scissors.keras".
 ###
